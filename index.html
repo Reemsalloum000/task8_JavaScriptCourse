@@ -207,7 +207,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
-        // Mock perfume data مع روابط صور تعمل بشكل مؤكد
         const mockPerfumes = [
             {
                 id: 1,
@@ -255,7 +254,6 @@
             }
         ];
 
-        // دالة لإنشاء النجوم حسب التقييم
         function generateRating(rating) {
             const fullStars = Math.floor(rating);
             const hasHalfStar = rating % 1 >= 0.5;
@@ -277,7 +275,6 @@
             return stars;
         }
 
-        // دالة عرض العطور في الصفحة
         function displayPerfumes(perfumes) {
             let html = '<div class="perfume-grid">';
             
@@ -306,10 +303,8 @@
             document.getElementById('product-container').innerHTML = html;
         }
 
-        // دالة محاكاة استدعاء API
         async function fetchPerfumes() {
             try {
-                // تأخير محاكاة تحميل
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 displayPerfumes(mockPerfumes);
             } catch (error) {
