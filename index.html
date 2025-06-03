@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Luxury Perfume Collection</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark: #1A1A1A;
+            --light: #F5F5F5;
+            --accent: #8B4513;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--dark), #333);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gold);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            font-weight: 300;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            opacity: 0.8;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 4rem;
+            color: var(--accent);
+        }
+        
+        .perfume-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        
+        .perfume-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .perfume-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        
+        .perfume-image-container {
+            height: 350px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .perfume-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .perfume-card:hover .perfume-image {
+            transform: scale(1.05);
+        }
+        
+        .perfume-details {
+            padding: 1.8rem;
+            position: relative;
+        }
+        
+        .perfume-name {
+            font-size: 1.4rem;
+            margin: 0 0 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .perfume-brand {
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+        
+        .perfume-notes {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+        
+        .perfume-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 1.2rem 0;
+            color: var(--accent);
+        }
+        
+        .rating {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .add-to-cart {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        
+        .add-to-cart:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2.5rem;
+            margin-top: 5rem;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            color: #B71C1C;
+            font-size: 1.2rem;
+            background: #FFEBEE;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LUXURY PERFUME COLLECTION</h1>
+        <p class="subtitle">Scents that tell your story</p>
+    </header>
+    
+    <div class="container">
+        <div id="product-container">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading our exclusive fragrances...
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2023 Essence Luxe. All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // Mock perfume data مع روابط صور تعمل بشكل مؤكد
+        const mockPerfumes = [
+            {
+                id: 1,
+                name: "Noir Essence",
+                brand: "Tom Ford",
+                price: 285,
+                rating: 4.8,
+                reviews: 124,
+                image: "https://images.unsplash.com/photo-1664470740442-f5de3e512e8b?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Tm9pciUyMEVzc2VuY2UlMjBwZXJmdW1lfGVufDB8fDB8fHww",
+                notes: "Black Orchid, Vanilla, Patchouli",
+                description: "A mysterious and sensual fragrance with dark floral accords"
+            },
+            {
+                id: 2,
+                name: "Light Blue",
+                brand: "Dolce & Gabbana",
+                price: 95,
+                rating: 4.5,
+                reviews: 98,
+                image: "https://images.unsplash.com/photo-1706408604086-144590f4020a?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TGlnaHQlMjBCbHVlJTIwcGVyZnVtZXxlbnwwfHwwfHx8MA%3D%3D",
+                notes: "Sicilian Lemon, Apple, Cedarwood",
+                description: "A fresh and breezy fragrance perfect for summer"
+            },
+            {
+                id: 3,
+                name: "Baccarat Rouge 540",
+                brand: "Maison Francis Kurkdjian",
+                price: 325,
+                rating: 4.9,
+                reviews: 215,
+                image: "https://images.unsplash.com/photo-1737424065216-bc51dd626175?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8QmFjY2FyYXQlMjBSb3VnZSUyMDU0MHBlcmZ1bWV8ZW58MHx8MHx8fDA%3D",
+                notes: "Saffron, Amberwood, Ambergris",
+                description: "An extraordinary olfactory experience with rich and warm notes"
+            },
+            {
+                id: 4,
+                name: "Bleu de Chanel",
+                brand: "Chanel",
+                price: 150,
+                rating: 4.7,
+                reviews: 187,
+                image: "https://images.unsplash.com/photo-1676305982764-0867908969b3?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8QmxldSUyMGRlJTIwQ2hhbmVsJTIwcGVyZnVtZXxlbnwwfHwwfHx8MA%3D%3D",
+                notes: "Citrus, Sandalwood, Cedar",
+                description: "A bold and woody scent that embodies freedom"
+            }
+        ];
+
+        // دالة لإنشاء النجوم حسب التقييم
+        function generateRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="far fa-star"></i>';
+            }
+            
+            return stars;
+        }
+
+        // دالة عرض العطور في الصفحة
+        function displayPerfumes(perfumes) {
+            let html = '<div class="perfume-grid">';
+            
+            perfumes.forEach(perfume => {
+                html += `
+                    <div class="perfume-card">
+                        <div class="perfume-image-container">
+                            <img src="${perfume.image}" alt="${perfume.name}" class="perfume-image" />
+                        </div>
+                        <div class="perfume-details">
+                            <p class="perfume-brand">${perfume.brand}</p>
+                            <h3 class="perfume-name">${perfume.name}</h3>
+                            <div class="rating">
+                                ${generateRating(perfume.rating)} 
+                                <span style="color: #666; margin-left: 5px;">(${perfume.reviews})</span>
+                            </div>
+                            <p class="perfume-notes"><strong>Key Notes:</strong> ${perfume.notes}</p>
+                            <p class="perfume-price">$${perfume.price.toFixed(2)}</p>
+                            <button class="add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            document.getElementById('product-container').innerHTML = html;
+        }
+
+        // دالة محاكاة استدعاء API
+        async function fetchPerfumes() {
+            try {
+                // تأخير محاكاة تحميل
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                displayPerfumes(mockPerfumes);
+            } catch (error) {
+                console.error('Error fetching perfumes:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Connection Error',
+                    html: `
+                        <p>We couldn't load our perfume collection.</p>
+                        <p><small>${error.message}</small></p>
+                    `,
+                    confirmButtonText: 'Try Again',
+                    background: '#F5F5F5',
+                    backdrop: `
+                        rgba(0,0,0,0.4)
+                        url("https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif")
+                        center top
+                        no-repeat
+                    `
+                }).then(() => {
+                    fetchPerfumes();
+                });
+                
+                document.getElementById('product-container').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load perfumes. Please check your connection and try again.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', fetchPerfumes);
+    </script>
+</body>
+</html>
